@@ -1,11 +1,5 @@
-// app.js
-// Gestion de l'interface : saisie des points, menu des transformations,
-// historique et affichage. Après chaque changement, on recalcule la matrice
-// composée M = Tn × ... × T1 et on l'applique au polygone original.
-
 "use strict";
 
-// Les 9 transformations du menu : type de paramètre, matrice et texte de l'historique.
 var TRANSFORMATIONS = {
   echelleX: {
     parametres: "k",
@@ -54,9 +48,8 @@ var TRANSFORMATIONS = {
   }
 };
 
-// Exemples de démonstration demandés dans l'énoncé.
 var EXEMPLES = [
-  { // triangle, 3 transformations
+  {
     points: [{ x: 1, y: 1 }, { x: 4, y: 1 }, { x: 2, y: 3 }],
     etapes: [
       { type: "echelleX", parametres: { k: 2 } },
@@ -64,14 +57,14 @@ var EXEMPLES = [
       { type: "rotation90", parametres: {} }
     ]
   },
-  { // quadrilatère, composition de 2 transformations
+  {
     points: [{ x: 2, y: 0 }, { x: 6, y: 2 }, { x: 4, y: 6 }, { x: 0, y: 4 }],
     etapes: [
       { type: "homothetie", parametres: { k: 0.5 } },
       { type: "symetrieY", parametres: {} }
     ]
   },
-  { // translation puis rotation
+  {
     points: [{ x: 1, y: 1 }, { x: 3, y: 1 }, { x: 1, y: 2 }],
     etapes: [
       { type: "translation", parametres: { a: 2, b: 1 } },
@@ -80,7 +73,7 @@ var EXEMPLES = [
   }
 ];
 
-var historique = []; // transformations appliquées, dans l'ordre
+var historique = [];
 
 var corpsPoints = document.getElementById("corps-points");
 var erreurPoints = document.getElementById("erreur-points");
@@ -95,8 +88,6 @@ var ctx = canvas.getContext("2d");
 var formule = document.getElementById("formule");
 var zoneMatrice = document.getElementById("matrice-composee");
 var corpsCoordonnees = document.getElementById("corps-coordonnees");
-
-// ---------- Saisie des points ----------
 
 function ajouterLignePoint(x, y) {
   var tr = document.createElement("tr");
@@ -119,7 +110,6 @@ function remplirPoints(points) {
   points.forEach(function (p) { ajouterLignePoint(p.x, p.y); });
 }
 
-// Renvoie la liste des points, ou null si une coordonnée est vide ou invalide.
 function lirePoints() {
   var lignes = corpsPoints.querySelectorAll("tr");
   var points = [];
@@ -136,7 +126,6 @@ function lirePoints() {
   return points;
 }
 
-// Noms A, B, C... et minimum de 3 points.
 function mettreAJourLignesPoints() {
   var lignes = corpsPoints.querySelectorAll("tr");
   lignes.forEach(function (tr, i) {
@@ -145,9 +134,6 @@ function mettreAJourLignesPoints() {
   });
 }
 
-// ---------- Transformations ----------
-
-// Affiche le champ k ou (a, b) selon la transformation choisie.
 function afficherParametres() {
   var t = TRANSFORMATIONS[choixTransformation.value];
   paramK.hidden = t.parametres !== "k";
@@ -194,7 +180,6 @@ function appliquerTransformation() {
   afficherTout();
 }
 
-// Retour au polygone original.
 function reinitialiser() {
   historique = [];
   erreurTransformation.textContent = "";
@@ -210,8 +195,6 @@ function chargerExemple(numero) {
   });
   afficherTout();
 }
-
-// ---------- Affichage des résultats ----------
 
 function creerMatriceHTML(M) {
   var table = document.createElement("table");
@@ -240,7 +223,6 @@ function afficherHistorique() {
   });
 }
 
-// Exemple : M = T3 × T2 × T1 (la dernière appliquée est à gauche).
 function texteFormule() {
   if (historique.length === 0) return "M = I (aucune transformation)";
   var noms = [];
@@ -265,13 +247,11 @@ function afficherCoordonnees(points, transformes) {
   });
 }
 
-// Recalcule et redessine tout.
 function afficherTout() {
   mettreAJourLignesPoints();
   afficherHistorique();
   formule.textContent = texteFormule();
 
-  // matrice composée M = Tn × ... × T1
   var M = composer(historique.map(function (etape) { return etape.matrice; }));
   zoneMatrice.innerHTML = "";
   zoneMatrice.appendChild(creerMatriceHTML(M));
@@ -283,10 +263,8 @@ function afficherTout() {
     return;
   }
 
-  // P' = M × P pour chaque sommet
   var transformes = transformerPolygone(M, points);
 
-  // la vue englobe les deux polygones
   var vue = calculerVue([points, transformes], canvas.width);
   dessinerRepere(ctx, vue);
   dessinerPolygone(ctx, vue, points, {
@@ -301,14 +279,11 @@ function afficherTout() {
   afficherCoordonnees(points, transformes);
 }
 
-// ---------- Événements ----------
-
 document.getElementById("bouton-ajouter").addEventListener("click", function () {
   ajouterLignePoint(0, 0);
   afficherTout();
 });
 
-// mise à jour à chaque modification d'un point
 corpsPoints.addEventListener("input", afficherTout);
 
 choixTransformation.addEventListener("change", afficherParametres);
@@ -321,7 +296,6 @@ document.querySelectorAll("[data-exemple]").forEach(function (bouton) {
   });
 });
 
-// triangle de départ
 remplirPoints([{ x: 1, y: 1 }, { x: 4, y: 1 }, { x: 2, y: 3 }]);
 afficherParametres();
 afficherTout();

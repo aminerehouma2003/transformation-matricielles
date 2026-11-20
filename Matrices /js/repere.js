@@ -1,10 +1,5 @@
-// repere.js
-// Dessin du repère et des polygones sur le canvas (aucun calcul de matrice ici).
-
 "use strict";
 
-// Choisit la zone du plan à afficher pour que tous les points restent visibles.
-// L'origine est toujours incluse pour garder les axes à l'écran.
 function calculerVue(listes, taille) {
   var xmin = 0, xmax = 0, ymin = 0, ymax = 0;
   listes.forEach(function (points) {
@@ -14,7 +9,6 @@ function calculerVue(listes, taille) {
     });
   });
 
-  // Même échelle sur les deux axes, avec un peu de marge.
   var etendue = Math.max(xmax - xmin, ymax - ymin, 4) * 1.3;
 
   return {
@@ -25,8 +19,6 @@ function calculerVue(listes, taille) {
   };
 }
 
-// Coordonnées du plan -> pixels. L'axe y est inversé car sur l'écran
-// les pixels descendent vers le bas.
 function versPixel(vue, x, y) {
   return {
     px: vue.taille / 2 + (x - vue.centreX) * vue.echelle,
@@ -34,7 +26,6 @@ function versPixel(vue, x, y) {
   };
 }
 
-// Pas des graduations : 1, 2, 5, 10, 20, 50... selon le zoom.
 function choisirPas(echelle) {
   var pas = 1;
   var facteurs = [2, 2.5, 2];
@@ -46,7 +37,6 @@ function choisirPas(echelle) {
   return pas;
 }
 
-// Grille, axes et graduations.
 function dessinerRepere(ctx, vue) {
   var t = vue.taille;
   ctx.clearRect(0, 0, t, t);
@@ -107,8 +97,6 @@ function ligne(ctx, x1, y1, x2, y2) {
   ctx.stroke();
 }
 
-// Relie les sommets dans l'ordre de saisie, puis le dernier au premier.
-// style.suffixe vaut "" pour A, B, C... et "'" pour A', B', C'...
 function dessinerPolygone(ctx, vue, points, style) {
   if (points.length === 0) return;
 
@@ -143,7 +131,6 @@ function nomSommet(i) {
   return i < 26 ? String.fromCharCode(65 + i) : "P" + (i + 1);
 }
 
-// Arrondi à 2 décimales pour l'affichage (et -0 devient 0).
 function formaterNombre(v) {
   var arrondi = Math.round(v * 100) / 100;
   if (arrondi === 0) arrondi = 0;
