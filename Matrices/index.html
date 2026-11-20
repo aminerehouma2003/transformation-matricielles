@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transformations matricielles en 2D</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/matrices.js" defer></script>
+  <script src="js/repere.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Visualiseur de transformations matricielles en 2D</h1>
+    <p>Les points sont des vecteurs-colonnes en coordonnées homogènes : P' = M × P</p>
+  </header>
+
+  <main class="grille">
+    <!-- Saisie et commandes -->
+    <section class="panneau">
+      <h2>1. Sommets du polygone</h2>
+      <table class="tableau" id="table-points">
+        <thead>
+          <tr><th>Point</th><th>x</th><th>y</th><th></th></tr>
+        </thead>
+        <tbody id="corps-points"></tbody>
+      </table>
+      <button type="button" id="bouton-ajouter">+ Ajouter un point</button>
+      <p class="aide">Au moins 3 points, reliés dans l'ordre de saisie.</p>
+      <p class="erreur" id="erreur-points"></p>
+
+      <h2>2. Transformations</h2>
+      <label for="choix-transformation">Transformation :</label>
+      <select id="choix-transformation">
+        <option value="echelleX">Changement d'échelle horizontal (k)</option>
+        <option value="echelleY">Changement d'échelle vertical (k)</option>
+        <option value="translation">Translation de vecteur (a, b)</option>
+        <option value="symetrieX">Symétrie par rapport à l'axe des abscisses</option>
+        <option value="symetrieY">Symétrie par rapport à l'axe des ordonnées</option>
+        <option value="rotation90">Rotation de 90° (sens antihoraire)</option>
+        <option value="rotation180">Rotation de 180° (sens antihoraire)</option>
+        <option value="rotation270">Rotation de 270° (sens antihoraire)</option>
+        <option value="homothetie">Homothétie de rapport k</option>
+      </select>
+
+      <!-- Paramètres (k ou a, b) -->
+      <div class="parametres" id="param-k">
+        <label for="champ-k">k =</label>
+        <input type="number" id="champ-k" value="2" step="any">
+      </div>
+      <div class="parametres" id="param-ab" hidden>
+        <label for="champ-a">a =</label>
+        <input type="number" id="champ-a" value="1" step="any">
+        <label for="champ-b">b =</label>
+        <input type="number" id="champ-b" value="1" step="any">
+      </div>
+
+      <div class="boutons">
+        <button type="button" id="bouton-appliquer">Appliquer</button>
+        <button type="button" id="bouton-reinitialiser" class="secondaire">Réinitialiser</button>
+      </div>
+      <p class="erreur" id="erreur-transformation"></p>
+
+      <h2>3. Exemples de démonstration</h2>
+      <div class="boutons">
+        <button type="button" class="secondaire" data-exemple="0">Triangle (3 transformations)</button>
+        <button type="button" class="secondaire" data-exemple="1">Quadrilatère (composition de 2)</button>
+        <button type="button" class="secondaire" data-exemple="2">Translation puis rotation</button>
+      </div>
+
+      <h2>4. Historique des transformations</h2>
+      <p class="aide" id="historique-vide">Aucune transformation appliquée.</p>
+      <ol id="historique"></ol>
+    </section>
+
+    <!-- Repère et résultats -->
+    <section class="panneau">
+      <canvas id="repere" width="560" height="560" aria-label="Repère cartésien"></canvas>
+      <p class="legende">
+        <span class="pastille originale"></span> Polygone original (A, B, C...)
+        <span class="pastille transformee"></span> Polygone transformé (A', B', C'...)
+      </p>
+
+      <h3>Matrice composée</h3>
+      <p id="formule"></p>
+      <div id="matrice-composee"></div>
+
+      <h3>Coordonnées des sommets</h3>
+      <table class="tableau">
+        <thead>
+          <tr><th>Sommet</th><th>Original (x, y)</th><th>Transformé (x', y')</th></tr>
+        </thead>
+        <tbody id="corps-coordonnees"></tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
